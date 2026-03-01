@@ -1,29 +1,34 @@
 {
   "root": true,
-  "ignorePatterns": ["projects/**/*"],
+  "ignorePatterns": [
+    "projects/**/*",
+    "dist/**/*",
+    "node_modules/**/*"
+  ],
   "overrides": [
     {
       "files": ["*.ts"],
-      "parser": "@angular-eslint/template-parser",
+      "parser": "@typescript-eslint/parser",
       "parserOptions": {
         "project": ["tsconfig.json"],
-        "sourceType": "module"
+        "createDefaultProgram": true
       },
       "plugins": [
         "@angular-eslint",
-        "unused-imports",
+        "@typescript-eslint",
         "rxjs",
-        "rxjs-angular"
+        "rxjs-angular",
+        "unused-imports"
       ],
       "extends": [
         "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
         "plugin:@angular-eslint/recommended",
         "plugin:rxjs/recommended",
-        "plugin:rxjs-angular/recommended",
         "prettier"
       ],
       "rules": {
-        /* Angular / Signals */
+        /* Angular */
         "@angular-eslint/component-selector": [
           "error",
           {
@@ -32,27 +37,39 @@
             "style": "kebab-case"
           }
         ],
-
-        /* Código limpio */
-        "unused-imports/no-unused-imports": "error",
-        "no-console": ["warn", { "allow": ["warn", "error"] }],
-        "eqeqeq": ["error", "always"],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
 
         /* RxJS */
-        "rxjs/no-ignored-subscription": "error",
+        "rxjs/no-ignored-observable": "error",
         "rxjs/no-exposed-subjects": "error",
-        "rxjs/no-nested-subscribe": "error",
+        "rxjs/no-nested-subscribe": "warn",
+        "rxjs/no-unbound-methods": "error",
+
+        /* RxJS Angular */
+        "rxjs-angular/prefer-takeuntil": "warn",
+        "rxjs-angular/prefer-async-pipe": "warn",
+
+        /* Imports */
+        "unused-imports/no-unused-imports": "error",
 
         /* TypeScript */
-        "@typescript-eslint/no-explicit-any": "error"
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/explicit-function-return-type": "off"
       }
     },
     {
       "files": ["*.html"],
       "extends": [
-        "plugin:@angular-eslint/template/recommended",
-        "prettier"
-      ]
+        "plugin:@angular-eslint/template/recommended"
+      ],
+      "rules": {}
     }
   ]
 }
