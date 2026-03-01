@@ -1,0 +1,39 @@
+name: Angular CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-build:
+    name: Lint & Build Angular App
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Node (estable para Angular 21)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 3️⃣ Instalar dependencias (determinístico)
+      - name: Install dependencies
+        run: npm ci
+
+      # 4️⃣ Lint (ESLint real)
+      - name: Run ESLint
+        run: npm run lint
+
+      # 5️⃣ Build producción
+      - name: Build Angular app
+        run: npm run build -- --configuration production
