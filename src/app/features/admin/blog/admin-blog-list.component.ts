@@ -1,0 +1,213 @@
+/**
+ * Listado de posts de blog en el panel admin.
+ *
+ * Muestra todos los posts (publicados y borradores) en una tabla responsiva.
+ * Permite: cambiar estado (publicar/borrador), editar y eliminar con confirmación.
+ */
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { BlogService } from '../../../core/services/blog.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { SpinnerComponent } from '../../../shared/components/spinner.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state.component';
+import { TagBadgeComponent } from '../../../shared/components/tag-badge.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog.component';
+import { BlogPostResponse } from '../../../core/models/api.models';
+
+@Component({
+  selector: 'app-admin-blog-list',
+  standalone: true,
+  imports: [
+    RouterLink,
+    DatePipe,
+    TranslatePipe,
+    SpinnerComponent,
+    EmptyStateComponent,
+    TagBadgeComponent,
+    ConfirmDialogComponent,
+  ],
+  template: `
+    <div class="space-y-6">
+
+      <!-- Encabezado -->
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-zinc-100">
+          {{ 'admin.blog.title' | translate }}
+        </h1>
+        <a routerLink="/admin/blog/new" class="btn-primary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          {{ 'admin.blog.new' | translate }}
+        </a>
+      </div>
+
+      <!-- Carga -->
+      @if (blogSvc.isLoading() && blogSvc.posts().length === 0) {
+        <div class="flex justify-center py-16"><app-spinner size="lg" /></div>
+      } @else if (blogSvc.posts().length === 0) {
+        <app-empty-state
+          [message]="'admin.blog.empty' | translate"
+          [actionLabel]="'admin.blog.new' | translate"
+        />
+      } @else {
+
+        <!-- Tabla responsiva -->
+        <div class="card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-zinc-700">
+                  <th class="text-left px-4 py-3 text-xs font-medium text-zinc-400 uppercase tracking-wider">Título</th>
+                  <th class="text-left px-4 py-3 text-xs font-medium text-zinc-400 uppercase tracking-wider hidden sm:table-cell">Tags</th>
+                  <th class="text-left px-4 py-3 text-xs font-medium text-zinc-400 uppercase tracking-wider hidden md:table-cell">Fecha</th>
+                  <th class="text-left px-4 py-3 text-xs font-medium text-zinc-400 uppercase tracking-wider">Estado</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-800">
+                @for (post of blogSvc.posts(); track post.id) {
+                  <tr class="hover:bg-zinc-800/50 transition-colors group">
+                    <!-- Título -->
+                    <td class="px-4 py-3">
+                      <p class="font-medium text-zinc-100 truncate max-w-[200px] sm:max-w-xs">
+                        {{ getTitle(post) }}
+                      </p>
+                      <p class="text-xs text-zinc-500 font-mono truncate max-w-[200px] sm:max-w-xs">
+                        /blog/{{ post.slug }}
+                      </p>
+                    </td>
+
+                    <!-- Tags -->
+                    <td class="px-4 py-3 hidden sm:table-cell">
+                      <div class="flex flex-wrap gap-1">
+                        @for (tag of post.tags.slice(0, 2); track tag) {
+                          <app-tag-badge [label]="tag" color="indigo" />
+                        }
+                        @if (post.tags.length > 2) {
+                          <app-tag-badge [label]="'+' + (post.tags.length - 2)" color="zinc" />
+                        }
+                      </div>
+                    </td>
+
+                    <!-- Fecha -->
+                    <td class="px-4 py-3 hidden md:table-cell text-zinc-400 text-xs">
+                      @if (post.publishedAt) {
+                        <time [dateTime]="post.publishedAt">
+                          {{ post.publishedAt | date:'mediumDate' }}
+                        </time>
+                      } @else {
+                        <span class="text-zinc-600">—</span>
+                      }
+                    </td>
+
+                    <!-- Estado -->
+                    <td class="px-4 py-3">
+                      @if (post.status === 'published') {
+                        <span class="badge-published">Publicado</span>
+                      } @else {
+                        <span class="badge-draft">Borrador</span>
+                      }
+                    </td>
+
+                    <!-- Acciones -->
+                    <td class="px-4 py-3">
+                      <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <!-- Publicar / Despublicar -->
+                        <button
+                          type="button"
+                          class="p-1.5 rounded text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors"
+                          [title]="post.status === 'published' ? 'Despublicar' : 'Publicar'"
+                          (click)="toggleStatus(post)"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                          </svg>
+                        </button>
+                        <!-- Editar -->
+                        <a
+                          [routerLink]="['/admin/blog', post.id, 'edit']"
+                          class="p-1.5 rounded text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors"
+                          title="Editar"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                          </svg>
+                        </a>
+                        <!-- Eliminar -->
+                        <button
+                          type="button"
+                          class="p-1.5 rounded text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                          title="Eliminar"
+                          (click)="confirmDelete(post)"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Diálogo de confirmación -->
+      <app-confirm-dialog
+        [title]="'admin.blog.delete' | translate"
+        [message]="'admin.blog.deleteConfirm' | translate"
+        [isOpen]="showDeleteDialog()"
+        (confirmed)="deleteConfirmed()"
+        (cancelled)="showDeleteDialog.set(false)"
+      />
+    </div>
+  `,
+})
+export class AdminBlogListComponent implements OnInit {
+  readonly blogSvc = inject(BlogService);
+  readonly lang = inject(LanguageService);
+
+  readonly showDeleteDialog = signal(false);
+  private postToDelete = signal<BlogPostResponse | null>(null);
+
+  ngOnInit(): void {
+    this.blogSvc.loadAll();
+  }
+
+  getTitle(post: BlogPostResponse): string {
+    const lang = this.lang.lang();
+    const t = post.translations.find(t => t.language === lang) ?? post.translations[0];
+    return t?.title ?? post.slug;
+  }
+
+  toggleStatus(post: BlogPostResponse): void {
+    const newStatus = post.status === 'published' ? 'draft' : 'published';
+    this.blogSvc.update(post.id, { status: newStatus }).subscribe({
+      next: (updated) => this.blogSvc.updateLocal(updated),
+    });
+  }
+
+  confirmDelete(post: BlogPostResponse): void {
+    this.postToDelete.set(post);
+    this.showDeleteDialog.set(true);
+  }
+
+  deleteConfirmed(): void {
+    const post = this.postToDelete();
+    if (!post) return;
+    this.blogSvc.delete(post.id).subscribe({
+      next: () => {
+        this.blogSvc.removeLocal(post.id);
+        this.showDeleteDialog.set(false);
+      },
+    });
+  }
+}
