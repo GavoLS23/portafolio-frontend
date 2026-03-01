@@ -7,10 +7,14 @@
   ],
   "overrides": [
     {
-      "files": ["*.ts"],
+      "files": [
+        "*.ts"
+      ],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
-        "project": ["tsconfig.json"],
+        "project": [
+          "tsconfig.eslint.json"
+        ],
         "createDefaultProgram": true
       },
       "plugins": [
@@ -45,27 +49,25 @@
             "style": "camelCase"
           }
         ],
-
         /* RxJS */
         "rxjs/no-ignored-observable": "error",
         "rxjs/no-exposed-subjects": "error",
         "rxjs/no-nested-subscribe": "warn",
         "rxjs/no-unbound-methods": "error",
-
         /* RxJS Angular */
         "rxjs-angular/prefer-takeuntil": "warn",
         "rxjs-angular/prefer-async-pipe": "warn",
-
         /* Imports */
         "unused-imports/no-unused-imports": "error",
-
         /* TypeScript */
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/explicit-function-return-type": "off"
       }
     },
     {
-      "files": ["*.html"],
+      "files": [
+        "*.html"
+      ],
       "extends": [
         "plugin:@angular-eslint/template/recommended"
       ],
