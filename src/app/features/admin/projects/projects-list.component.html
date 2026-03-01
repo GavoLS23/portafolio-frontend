@@ -1,0 +1,153 @@
+<div class="space-y-6">
+
+  <!-- Encabezado -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-zinc-100">
+        {{ 'admin.projects.title' | translate }}
+      </h1>
+      <p class="text-sm text-zinc-400 mt-1">
+        {{ 'admin.projects.dragHint' | translate }}
+      </p>
+    </div>
+    <a routerLink="/admin/projects/new" class="btn-primary">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      {{ 'admin.projects.new' | translate }}
+    </a>
+  </div>
+
+  <!-- Estado de carga -->
+  @if (projectsSvc.isLoading() && projectsSvc.projects().length === 0) {
+    <div class="flex justify-center py-16">
+      <app-spinner size="lg" />
+    </div>
+  } @else if (projectsSvc.error()) {
+    <p class="text-center text-red-400 py-8">{{ projectsSvc.error() }}</p>
+  } @else if (projectsSvc.projects().length === 0) {
+    <app-empty-state
+      [message]="'admin.projects.empty' | translate"
+      [actionLabel]="'admin.projects.new' | translate"
+      (action)="goToNew()"
+    />
+  } @else {
+
+    <!-- Lista drag & drop -->
+    <div
+      cdkDropList
+      (cdkDropListDropped)="onDrop($event)"
+      class="space-y-2"
+    >
+      @for (project of projectsSvc.projects(); track project.id; let i = $index) {
+        <div
+          cdkDrag
+          class="card group flex items-center gap-4 px-4 py-3 cursor-grab active:cursor-grabbing
+                 hover:border-zinc-600 transition-all"
+        >
+          <!-- Handle drag -->
+          <div cdkDragHandle class="text-zinc-600 hover:text-zinc-400 transition-colors flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 8h16M4 16h16"/>
+            </svg>
+          </div>
+
+          <!-- Orden -->
+          <span class="text-sm font-mono text-zinc-600 w-6 text-center flex-shrink-0">
+            {{ i + 1 }}
+          </span>
+
+          <!-- Miniatura -->
+          <div class="w-12 h-9 rounded bg-zinc-700/50 flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <svg class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01"/>
+            </svg>
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-zinc-100 truncate">
+              {{ getTitle(project) }}
+            </p>
+            <p class="text-xs text-zinc-500 truncate font-mono">
+              /project/{{ project.slug }}
+            </p>
+          </div>
+
+          <!-- Technologies (desktop) -->
+          <div class="hidden sm:flex gap-1 flex-wrap max-w-[180px]">
+            @for (techId of project.technologyIds.slice(0, 3); track techId) {
+              <app-tag-badge [label]="getTechName(techId)" color="zinc" />
+            }
+          </div>
+
+          <!-- Estado -->
+          <div class="flex-shrink-0">
+            @if (project.status === 'published') {
+              <span class="badge-published">Publicado</span>
+            } @else {
+              <span class="badge-draft">Borrador</span>
+            }
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+            <!-- Publicar / Despublicar -->
+            <button
+              type="button"
+              class="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors"
+              [title]="project.status === 'published' ? 'Despublicar' : 'Publicar'"
+              (click)="toggleStatus(project)"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                @if (project.status === 'published') {
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                } @else {
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                }
+              </svg>
+            </button>
+
+            <!-- Editar -->
+            <a
+              [routerLink]="['/admin/projects', project.id, 'edit']"
+              class="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors"
+              title="Editar"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </a>
+
+            <!-- Eliminar -->
+            <button
+              type="button"
+              class="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              title="Eliminar"
+              (click)="confirmDelete(project)"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Diálogo de confirmación de borrado -->
+  <app-confirm-dialog
+    [title]="'admin.projects.delete' | translate"
+    [message]="'admin.projects.deleteConfirm' | translate"
+    [isOpen]="showDeleteDialog()"
+    (confirmed)="deleteConfirmed()"
+    (cancelled)="showDeleteDialog.set(false)"
+  />
+</div>
