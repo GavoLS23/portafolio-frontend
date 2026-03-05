@@ -56,8 +56,8 @@
         "rxjs/no-unbound-methods": "error",
         "rxjs/no-implicit-any-catch": "off",
         /* RxJS Angular */
-        "rxjs-angular/prefer-takeuntil": "warn",
-        "rxjs-angular/prefer-async-pipe": "warn",
+        "rxjs-angular/prefer-takeuntil": ["warn", { "alias": ["takeUntilDestroyed"] }],
+        "rxjs-angular/prefer-async-pipe": "off",
         /* Imports */
         "unused-imports/no-unused-imports": "error",
         /* TypeScript */

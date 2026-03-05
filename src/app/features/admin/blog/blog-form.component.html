@@ -1,0 +1,148 @@
+<div class="max-w-3xl space-y-6">
+
+  <!-- Encabezado -->
+  <div class="flex items-center gap-4">
+    <a routerLink="/admin/blog"
+      class="p-2 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </a>
+    <h1 class="text-2xl font-bold text-zinc-100">
+      {{ isEdit() ? 'Editar post' : ('admin.blog.new' | translate) }}
+    </h1>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center py-16"><app-spinner size="lg" /></div>
+  } @else {
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-6">
+
+      <!-- Info básica -->
+      <div class="card p-6 space-y-4">
+        <h2 class="text-base font-semibold text-zinc-200 border-b border-zinc-700 pb-2">
+          Información básica
+        </h2>
+
+        <!-- Slug -->
+        <div>
+          <label class="form-label">{{ 'admin.blog.slug' | translate }}</label>
+          <div class="flex items-center gap-2">
+            <span class="text-zinc-500 text-sm">/blog/</span>
+            <input type="text" formControlName="slug" class="form-input flex-1" placeholder="mi-primer-post" />
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <label class="form-label">{{ 'admin.blog.tags' | translate }}</label>
+          <input type="text" formControlName="tags" class="form-input" placeholder="scala, backend, funcional" />
+          <!-- Preview de tags -->
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            @for (tag of parsedTags(); track tag) {
+              <app-tag-badge [label]="tag" color="indigo" />
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido multilingüe -->
+      <div class="card p-6 space-y-6">
+        <h2 class="text-base font-semibold text-zinc-200 border-b border-zinc-700 pb-2">
+          Contenido (ES / EN)
+        </h2>
+
+        <!-- Tabs de idioma -->
+        <div class="flex gap-1 p-1 bg-zinc-900/50 rounded-lg w-fit">
+          @for (tab of ['es', 'en']; track tab) {
+            <button
+              type="button"
+              class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+              [class.bg-zinc-700]="activeLang() === tab"
+              [class.text-zinc-100]="activeLang() === tab"
+              [class.text-zinc-400]="activeLang() !== tab"
+              (click)="activeLang.set(tab)"
+            >{{ tab.toUpperCase() }}</button>
+          }
+        </div>
+
+        <!-- Campos según idioma activo -->
+        @if (activeLang() === 'es') {
+          <div class="space-y-4" formGroupName="es">
+            <div>
+              <label class="form-label">{{ 'admin.blog.title_es' | translate }}</label>
+              <input type="text" formControlName="title" class="form-input"
+                placeholder="Título del post" (input)="autoSlug()" />
+            </div>
+            <div>
+              <label class="form-label">{{ 'admin.blog.excerpt_es' | translate }}</label>
+              <textarea formControlName="excerpt" rows="2" class="form-input resize-none"
+                placeholder="Resumen corto del post..."></textarea>
+            </div>
+            <div>
+              <label class="form-label">
+                {{ 'admin.blog.content_es' | translate }}
+                <span class="ml-2 text-xs text-zinc-500 font-normal">HTML / Markdown</span>
+              </label>
+              <!-- TODO: Reemplazar por editor TipTap -->
+              <textarea
+                formControlName="content"
+                rows="14"
+                class="form-input resize-y font-mono text-xs"
+                placeholder="<p>Contenido del post en HTML...</p>"
+              ></textarea>
+            </div>
+          </div>
+        }
+
+        @if (activeLang() === 'en') {
+          <div class="space-y-4" formGroupName="en">
+            <div>
+              <label class="form-label">{{ 'admin.blog.title_en' | translate }}</label>
+              <input type="text" formControlName="title" class="form-input" placeholder="Post title" />
+            </div>
+            <div>
+              <label class="form-label">{{ 'admin.blog.excerpt_en' | translate }}</label>
+              <textarea formControlName="excerpt" rows="2" class="form-input resize-none"
+                placeholder="Short summary of the post..."></textarea>
+            </div>
+            <div>
+              <label class="form-label">
+                {{ 'admin.blog.content_en' | translate }}
+                <span class="ml-2 text-xs text-zinc-500 font-normal">HTML / Markdown</span>
+              </label>
+              <textarea
+                formControlName="content"
+                rows="14"
+                class="form-input resize-y font-mono text-xs"
+                placeholder="<p>Post content in HTML...</p>"
+              ></textarea>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Acciones -->
+      <div class="flex items-center justify-between pt-2">
+        <div class="flex gap-3">
+          <button type="submit" class="btn-primary" [disabled]="saving()">
+            @if (saving()) {
+              <app-spinner size="sm" />
+              {{ 'admin.blog.saving' | translate }}
+            } @else {
+              {{ 'admin.blog.save' | translate }}
+            }
+          </button>
+        </div>
+        <a routerLink="/admin/blog" class="btn-danger">Cancelar</a>
+      </div>
+
+      @if (saveError()) {
+        <div class="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+          <p class="text-sm text-red-400">{{ saveError() }}</p>
+        </div>
+      }
+    </form>
+  }
+</div>

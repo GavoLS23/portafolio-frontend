@@ -1,1 +1,122 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    @apply bg-surface-900 text-cream-900;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #261e3a; }
+  ::-webkit-scrollbar-thumb { background: #2e2748; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a3158; }
+}
+
+/* ── Components ────────────────────────────────────────────────────────── */
+
+@layer components {
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5
+           text-xs font-bold tracking-[0.15em] uppercase
+           bg-accent-500 text-surface-900
+           hover:bg-accent-400 active:bg-accent-600
+           transition-all duration-150
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-accent-500 focus-visible:ring-offset-2
+           focus-visible:ring-offset-surface-900
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5
+           text-xs font-bold tracking-[0.15em] uppercase
+           border border-surface-600 text-cream-900
+           hover:border-accent-500/60 hover:text-accent-400
+           transition-all duration-150
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-accent-500 focus-visible:ring-offset-2
+           focus-visible:ring-offset-surface-900
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center gap-2 px-5 py-2.5
+           text-xs font-bold tracking-[0.15em] uppercase
+           bg-red-700 text-white
+           hover:bg-red-600 active:bg-red-800
+           transition-colors duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500
+           focus-visible:ring-offset-2 focus-visible:ring-offset-surface-900;
+  }
+
+  /* Cards */
+  .card {
+    @apply border border-surface-700 bg-surface-800;
+  }
+
+  .card-hover {
+    @apply border border-surface-700 bg-surface-800
+           hover:border-accent-500/40 hover:bg-surface-700
+           transition-all duration-300;
+  }
+
+  /* Layout */
+  .section-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-title {
+    @apply text-3xl sm:text-4xl font-bold text-cream-900 tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-base text-cream-900/50 mt-2;
+  }
+
+  /* Indicador de sección (01 /, 02 /, ...) */
+  .section-label {
+    @apply font-mono text-xs text-accent-500/60 tracking-[0.3em] uppercase;
+  }
+
+  /* Status badges */
+  .badge-draft {
+    @apply text-xs font-mono px-2 py-0.5
+           bg-ocean-800/40 text-accent-300 border border-ocean-700/40;
+  }
+
+  /* ── Form elements (admin) ─────────────────────────────────────────── */
+
+  .form-label {
+    @apply block text-xs font-medium text-zinc-400 mb-1.5 tracking-[0.08em] uppercase;
+  }
+
+  .form-input {
+    @apply block w-full rounded px-3 py-2 text-sm
+           bg-zinc-800 border border-zinc-700 text-zinc-100
+           focus:outline-none focus:ring-1 focus:ring-accent-500/50 focus:border-accent-500/50
+           transition-colors duration-150;
+  }
+
+  .form-error {
+    @apply text-xs text-red-400 mt-1;
+  }
+
+  .form-input::placeholder {
+    color: theme('colors.zinc.500');
+  }
+
+  /* Fondo con textura sutil de rejilla para el hero */
+  .bg-grid-texture {
+    background-image:
+      linear-gradient(rgba(101, 184, 166, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(101, 184, 166, 0.035) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+}

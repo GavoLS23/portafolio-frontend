@@ -1,0 +1,123 @@
+<div class="min-h-screen flex flex-col bg-surface-900 text-cream-900">
+
+  <!-- ── Navbar ──────────────────────────────────────────────────────── -->
+  <header class="sticky top-0 z-40 border-b border-surface-700 bg-surface-900/95 backdrop-blur-md">
+    <nav class="section-container flex items-center justify-between h-14">
+
+      <!-- Logo -->
+      <a
+        routerLink="/"
+        class="font-mono text-sm font-medium text-cream-900 hover:text-accent-500 transition-colors tracking-widest"
+      >
+        &lt;dev /&gt;
+      </a>
+
+      <!-- Links desktop -->
+      <div class="hidden md:flex items-center gap-8">
+        <a
+          routerLink="/"
+          routerLinkActive="text-accent-500"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="font-sans text-xs font-bold tracking-[0.15em] uppercase text-cream-900/50 hover:text-cream-900 transition-colors"
+        >
+          {{ 'nav.home' | translate }}
+        </a>
+        <a
+          routerLink="/blog"
+          routerLinkActive="text-accent-500"
+          class="font-sans text-xs font-bold tracking-[0.15em] uppercase text-cream-900/50 hover:text-cream-900 transition-colors"
+        >
+          {{ 'nav.blog' | translate }}
+        </a>
+
+        <div class="w-px h-3 bg-surface-600"></div>
+
+        <button
+          type="button"
+          class="font-mono text-xs text-cream-900/30 hover:text-accent-500 transition-colors tracking-widest"
+          (click)="langService.toggleLang()"
+          [attr.aria-label]="'Cambiar idioma a ' + ('lang.switch' | translate)"
+        >
+          {{ 'lang.current' | translate }}
+        </button>
+      </div>
+
+      <!-- Hamburger (mobile) -->
+      <button
+        type="button"
+        class="md:hidden p-2 text-cream-900/50 hover:text-cream-900 transition-colors"
+        (click)="menuOpen.set(!menuOpen())"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Abrir menú"
+      >
+        @if (menuOpen()) {
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        } @else {
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        }
+      </button>
+    </nav>
+
+    <!-- Menú mobile -->
+    @if (menuOpen()) {
+      <div class="md:hidden border-t border-surface-700 bg-surface-900 px-4 pb-4 pt-2 flex flex-col gap-1 animate-fade-in">
+        <a
+          routerLink="/"
+          routerLinkActive="text-accent-500"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="px-3 py-3 font-sans text-xs font-bold tracking-[0.15em] uppercase text-cream-900/50 hover:text-cream-900 transition-colors"
+          (click)="menuOpen.set(false)"
+        >
+          {{ 'nav.home' | translate }}
+        </a>
+        <a
+          routerLink="/blog"
+          routerLinkActive="text-accent-500"
+          class="px-3 py-3 font-sans text-xs font-bold tracking-[0.15em] uppercase text-cream-900/50 hover:text-cream-900 transition-colors"
+          (click)="menuOpen.set(false)"
+        >
+          {{ 'nav.blog' | translate }}
+        </a>
+        <div class="h-px bg-surface-700 my-1"></div>
+        <button
+          type="button"
+          class="px-3 py-3 font-mono text-xs text-cream-900/30 hover:text-accent-500 transition-colors text-left tracking-widest"
+          (click)="langService.toggleLang(); menuOpen.set(false)"
+        >
+          {{ 'lang.switch' | translate }}
+        </button>
+      </div>
+    }
+  </header>
+
+  <!-- ── Contenido ───────────────────────────────────────────────────── -->
+  <main class="flex-1">
+    <router-outlet />
+  </main>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────── -->
+  <footer class="border-t border-surface-700 mt-16">
+    <div class="section-container py-7">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-xs text-surface-500">&lt;dev /&gt;</span>
+          <span class="text-surface-600 text-xs">—</span>
+          <p class="font-mono text-xs text-cream-900/25">
+            &copy; {{ year }} {{ 'footer.rights' | translate }}
+          </p>
+        </div>
+        <p class="font-mono text-xs text-cream-900/20">
+          {{ 'footer.builtWith' | translate }}
+          <span class="text-accent-500/70">Angular</span>
+          <span class="text-cream-900/20"> & </span>
+          <span class="text-accent-500/70">Scala</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</div>

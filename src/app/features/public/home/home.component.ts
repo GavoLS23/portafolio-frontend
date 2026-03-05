@@ -40,148 +40,177 @@ import { DatePipe } from '@angular/common';
   ],
   template: `
     <!-- ── Hero ──────────────────────────────────────────────────────────── -->
-    <section class="relative overflow-hidden">
-      <!-- Gradient de fondo -->
-      <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px]
-                    bg-indigo-600/10 blur-3xl rounded-full"></div>
-      </div>
+    <section class="relative overflow-hidden border-b border-surface-700">
+      <div class="absolute inset-0 bg-grid-texture pointer-events-none" aria-hidden="true"></div>
+      <div
+        class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(45,96,115,0.25)_0%,transparent_65%)] pointer-events-none"
+        aria-hidden="true"></div>
 
-      <div class="section-container relative py-24 sm:py-32">
-        <div class="max-w-2xl">
-          <!-- Greeting -->
-          <p class="text-indigo-400 font-mono text-sm mb-4 animate-fade-in">
-            {{ 'hero.greeting' | translate }}
-          </p>
+      <div class="section-container relative py-24 sm:py-36">
+        <div class="grid lg:grid-cols-[1fr_200px] gap-12 items-start">
 
-          <!-- Nombre -->
-          <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-zinc-100 leading-tight mb-4 animate-slide-up">
-            Nombre Apellido
-          </h1>
+          <!-- Bloque de texto principal -->
+          <div>
+            <div class="flex items-center gap-4 mb-8 animate-fade-in">
+              <span class="section-label">01 / Portfolio</span>
+              <div class="h-px w-12 bg-surface-600"></div>
+            </div>
 
-          <!-- Rol -->
-          <p class="text-2xl sm:text-3xl font-medium text-zinc-400 mb-6 animate-slide-up">
-            {{ 'hero.role' | translate }}
-          </p>
+            <p class="section-label mb-3 animate-fade-in" style="animation-delay: 0.22s">
+              {{ 'hero.greeting' | translate }}
+            </p>
 
-          <!-- Bio -->
-          <p class="text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl animate-fade-in">
-            {{ 'hero.bio' | translate }}
-          </p>
+            <h1
+              class="text-[clamp(3.5rem,10vw,7rem)] font-serif italic text-cream-900
+                     leading-[0.88] tracking-tighter mb-6 animate-slide-up"
+              style="animation-delay: 0.08s"
+            >
+              Gustavo de Jes&uacute;s<br>
+              <span class="not-italic text-accent-500">Le&oacute;n Santos</span>
+            </h1>
 
-          <!-- CTAs -->
-          <div class="flex flex-wrap gap-4">
-            <a href="#projects" class="btn-primary">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-              </svg>
-              {{ 'hero.viewProjects' | translate }}
-            </a>
-            <a routerLink="/blog" class="btn-secondary">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
-              </svg>
-              {{ 'hero.readBlog' | translate }}
-            </a>
+            <p
+              class="text-xl sm:text-2xl font-semibold text-cream-900/60 tracking-wide mb-3 animate-slide-up"
+              style="animation-delay: 0.16s"
+            >
+              {{ 'hero.role' | translate }}
+            </p>
+
+            <p
+              class="font-serif text-base text-cream-900/55 leading-relaxed max-w-lg mb-10 animate-fade-in"
+              style="animation-delay: 0.28s"
+            >
+              {{ 'hero.bio' | translate }}
+            </p>
+
+            <div class="flex flex-wrap gap-4 animate-slide-up" style="animation-delay: 0.36s">
+              <a href="#projects" class="btn-primary">
+                {{ 'hero.viewProjects' | translate }}
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </a>
+              <a routerLink="/blog" class="btn-secondary">
+                {{ 'hero.readBlog' | translate }}
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
           </div>
 
-          <!-- Stack tecnológico -->
-          <div class="flex flex-wrap gap-2 mt-10">
+          <!-- Stack tecnológico (desktop) -->
+          <div
+            class="hidden lg:flex flex-col gap-3 pt-2 border-l border-surface-700 pl-8 animate-slide-left"
+            style="animation-delay: 0.28s"
+          >
+            <p class="section-label mb-2">Stack</p>
             @for (tech of heroTechs; track tech) {
-              <app-tag-badge [label]="tech" color="zinc" />
+              <div class="flex items-center gap-3 group">
+                <div class="w-1 h-1 bg-accent-500/40 group-hover:bg-accent-500 transition-colors shrink-0"></div>
+                <span
+                  class="font-mono text-xs text-cream-900/45 group-hover:text-cream-900/85 transition-colors whitespace-nowrap">
+                  {{ tech }}
+                </span>
+              </div>
             }
           </div>
+        </div>
+
+        <!-- Stack tecnológico (mobile) -->
+        <div class="lg:hidden flex flex-wrap gap-2 mt-10">
+          @for (tech of heroTechs; track tech) {
+            <app-tag-badge [label]="tech" color="zinc"/>
+          }
         </div>
       </div>
     </section>
 
     <!-- ── Proyectos ──────────────────────────────────────────────────── -->
-    <section id="projects" class="section-container py-16 sm:py-20">
-      <div class="mb-10">
-        <h2 class="section-title">{{ 'projects.title' | translate }}</h2>
-        <p class="section-subtitle">{{ 'projects.subtitle' | translate }}</p>
+    <section id="projects" class="section-container py-16 sm:py-24">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <span class="section-label">02 / Work</span>
+          <h2 class="section-title mt-2">{{ 'projects.title' | translate }}</h2>
+          <p class="section-subtitle">{{ 'projects.subtitle' | translate }}</p>
+        </div>
       </div>
 
-      <!-- Estado de carga -->
       @if (projects.isLoading()) {
         <div class="flex justify-center py-16">
-          <app-spinner size="lg" />
+          <app-spinner size="lg"/>
         </div>
       } @else if (projects.error()) {
         <p class="text-center text-red-400 py-8">{{ projects.error() }}</p>
       } @else if (projects.projects().length === 0) {
-        <app-empty-state [message]="'projects.empty' | translate" />
+        <app-empty-state [message]="'projects.empty' | translate"/>
       } @else {
-        <!-- Grid de proyectos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          @for (project of projects.projects(); track project.id) {
-            <article class="card-hover group flex flex-col overflow-hidden">
+        <!-- Grid con líneas separadoras editoriales -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-surface-700">
+          @for (project of projects.projects(); track project.id; let i = $index) {
+            <article class="bg-surface-900 hover:bg-surface-800 group flex flex-col transition-colors duration-200">
+
               <!-- Thumbnail -->
-              <div class="aspect-video bg-zinc-700/50 overflow-hidden">
-                @if (project.thumbnailMediaId) {
-                  <div class="w-full h-full flex items-center justify-center">
-                    <svg class="w-12 h-12 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                  </div>
+              <div class="relative aspect-video bg-surface-800 overflow-hidden">
+                <span class="absolute top-3 left-3 font-mono text-xs text-accent-500/50 z-10 tabular-nums">
+                  {{ (i + 1).toString().padStart(2, '0') }}
+                </span>
+                @if (project.thumbnailUrl) {
+                  <img
+                    [src]="project.thumbnailUrl"
+                    [alt]="getTitle(project)"
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 } @else {
-                  <!-- Placeholder con gradiente -->
-                  <div class="w-full h-full bg-gradient-to-br from-indigo-900/40 to-zinc-800 flex items-center justify-center">
-                    <span class="text-4xl font-bold text-indigo-500/30 font-mono">
+                  <div class="w-full h-full flex items-center justify-center">
+                    <span class="text-7xl font-extrabold text-surface-700 tracking-tighter select-none">
                       {{ getTitle(project).charAt(0) }}
                     </span>
                   </div>
                 }
+                <!-- Línea dorada animada en hover -->
+                <div class="absolute bottom-0 left-0 right-0 h-px bg-accent-500
+                            scale-x-0 group-hover:scale-x-100
+                            transition-transform duration-300 origin-left"></div>
               </div>
 
-              <!-- Contenido -->
-              <div class="p-5 flex flex-col flex-1">
-                <h3 class="text-lg font-semibold text-zinc-100 mb-2 group-hover:text-indigo-400 transition-colors">
+              <!-- Cuerpo de la tarjeta -->
+              <div class="p-5 flex flex-col flex-1 border-t border-surface-700">
+                <h3 class="text-sm font-bold text-cream-900 mb-2
+                           group-hover:text-accent-400 transition-colors leading-tight">
                   {{ getTitle(project) }}
                 </h3>
-                <p class="text-sm text-zinc-400 leading-relaxed mb-4 flex-1 line-clamp-3">
+                <p class="text-xs text-cream-900/50 leading-relaxed mb-4 flex-1 line-clamp-3">
                   {{ getDescription(project) }}
                 </p>
 
-                <!-- Tecnologías -->
                 <div class="flex flex-wrap gap-1.5 mb-4">
                   @for (techId of project.technologyIds.slice(0, 4); track techId) {
-                    <app-tag-badge [label]="getTechName(techId)" color="zinc" />
+                    <app-tag-badge [label]="getTechName(techId)" color="zinc"/>
                   }
                   @if (project.technologyIds.length > 4) {
-                    <app-tag-badge [label]="'+' + (project.technologyIds.length - 4)" color="zinc" />
+                    <app-tag-badge [label]="'+' + (project.technologyIds.length - 4)" color="zinc"/>
                   }
                 </div>
 
-                <!-- Links -->
-                <div class="flex gap-3 mt-auto pt-2 border-t border-zinc-700/50">
+                <div class="flex gap-4 pt-3 border-t border-surface-700">
                   <a
                     [routerLink]="['/project', project.slug]"
-                    class="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                    class="font-mono text-[10px] tracking-[0.12em] uppercase text-accent-500 hover:text-accent-400 transition-colors"
                   >
                     Ver detalle →
                   </a>
                   @if (project.demoUrl) {
-                    <a
-                      [href]="project.demoUrl"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-                    >
-                      {{ 'projects.viewDemo' | translate }}
+                    <a [href]="project.demoUrl" target="_blank" rel="noopener noreferrer"
+                       class="font-mono text-[10px] tracking-[0.12em] uppercase text-cream-900/35 hover:text-cream-900/75 transition-colors">
+                      Demo ↗
                     </a>
                   }
                   @if (project.repositoryUrl) {
-                    <a
-                      [href]="project.repositoryUrl"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-                    >
-                      {{ 'projects.viewCode' | translate }}
+                    <a [href]="project.repositoryUrl" target="_blank" rel="noopener noreferrer"
+                       class="font-mono text-[10px] tracking-[0.12em] uppercase text-cream-900/35 hover:text-cream-900/75 transition-colors">
+                      Code ↗
                     </a>
                   }
                 </div>
@@ -193,53 +222,55 @@ import { DatePipe } from '@angular/common';
     </section>
 
     <!-- ── Blog reciente ──────────────────────────────────────────────── -->
-    <section class="bg-zinc-800/30 border-t border-b border-zinc-800">
-      <div class="section-container py-16 sm:py-20">
-        <div class="flex items-center justify-between mb-10">
+    <section class="border-t border-surface-700">
+      <div class="section-container py-16 sm:py-24">
+        <div class="flex items-end justify-between mb-12">
           <div>
-            <h2 class="section-title">{{ 'blog.title' | translate }}</h2>
+            <span class="section-label">03 / Writing</span>
+            <h2 class="section-title mt-2">{{ 'blog.title' | translate }}</h2>
             <p class="section-subtitle">{{ 'blog.subtitle' | translate }}</p>
           </div>
-          <a routerLink="/blog" class="hidden sm:flex btn-secondary">
-            Ver todos →
-          </a>
+          <a routerLink="/blog" class="hidden sm:flex btn-secondary">Ver todos →</a>
         </div>
 
-        <!-- Estado de carga -->
         @if (blog.isLoading()) {
           <div class="flex justify-center py-16">
-            <app-spinner size="lg" />
+            <app-spinner size="lg"/>
           </div>
         } @else if (blog.posts().length === 0) {
-          <app-empty-state [message]="'blog.empty' | translate" />
+          <app-empty-state [message]="'blog.empty' | translate"/>
         } @else {
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Tarjetas con borde izquierdo dorado -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
             @for (post of recentPosts(); track post.id) {
               <article
                 [routerLink]="['/blog', post.slug]"
-                class="card-hover p-5 cursor-pointer group"
+                class="group cursor-pointer border-l-2 border-surface-600 hover:border-accent-500
+                       pl-4 py-1 transition-all duration-300"
               >
-                <!-- Tags -->
-                <div class="flex flex-wrap gap-1.5 mb-3">
+                <div class="flex flex-wrap gap-3 mb-3">
                   @for (tag of post.tags.slice(0, 2); track tag) {
-                    <app-tag-badge [label]="tag" color="indigo" />
+                    <span class="font-mono text-[10px] tracking-[0.2em] uppercase
+                                 text-accent-500/55 group-hover:text-accent-500/85 transition-colors">
+                      #{{ tag }}
+                    </span>
                   }
                 </div>
-
-                <h3 class="text-base font-semibold text-zinc-100 mb-2 group-hover:text-indigo-400 transition-colors">
+                <h3 class="text-sm font-bold text-cream-900 mb-2
+                           group-hover:text-accent-400 transition-colors leading-snug">
                   {{ getBlogTitle(post) }}
                 </h3>
-                <p class="text-sm text-zinc-400 line-clamp-2 mb-4">
+                <p class="text-xs text-cream-900/50 line-clamp-2 mb-4 leading-relaxed">
                   {{ getBlogExcerpt(post) }}
                 </p>
-
-                <div class="flex items-center justify-between text-xs text-zinc-500">
+                <div class="flex items-center justify-between text-xs">
                   @if (post.publishedAt) {
-                    <time [dateTime]="post.publishedAt">
-                      {{ post.publishedAt | date:'mediumDate' }}
+                    <time class="font-mono text-cream-900/25" [dateTime]="post.publishedAt">
+                      {{ post.publishedAt | date:'dd MMM yyyy' }}
                     </time>
                   }
-                  <span class="text-indigo-400 group-hover:text-indigo-300 font-medium">
+                  <span class="font-mono text-[10px] tracking-wide uppercase
+                               text-accent-500/55 group-hover:text-accent-400 transition-colors">
                     {{ 'blog.readMore' | translate }} →
                   </span>
                 </div>
@@ -247,11 +278,8 @@ import { DatePipe } from '@angular/common';
             }
           </div>
 
-          <!-- Ver todos (mobile) -->
-          <div class="sm:hidden mt-6 text-center">
-            <a routerLink="/blog" class="btn-secondary">
-              Ver todos los posts
-            </a>
+          <div class="sm:hidden mt-8">
+            <a routerLink="/blog" class="btn-secondary w-full justify-center">Ver todos los posts</a>
           </div>
         }
       </div>

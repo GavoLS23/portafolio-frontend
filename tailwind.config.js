@@ -1,64 +1,71 @@
-/**
- * Tailwind CSS v3 configuration.
- *
- * Escanea todos los archivos de templates Angular y TypeScript
- * para purgar clases no utilizadas en producción.
- *
- * Extiende la paleta base con los colores del design system del portafolio.
- */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './src/**/*.{html,ts}',
-  ],
+  content: ['./src/**/*.{html,ts}'],
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        /** Color de acento principal — indigo */
+        // Teal interactivo — CTA, links, estados activos
         accent: {
-          50:  '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
+          300: '#b5e8c3',
+          400: '#7ec8b8',
+          500: '#65b8a6',
+          600: '#4a9a8a',
+          700: '#377870',
         },
-        /** Escala de grises zinc para fondos y superficies */
+        // Superficies — púrpura oscuro
         surface: {
-          900: '#09090b',
-          800: '#18181b',
-          700: '#27272a',
-          600: '#3f3f46',
-          500: '#52525b',
+          900: '#1f192f',
+          800: '#261e3a',
+          700: '#2e2748',
+          600: '#3a3158',
+          500: '#4b3e6e',
+        },
+        // Azul verdoso — superficies elevadas, bordes, badges
+        ocean: {
+          900: '#1a3b47',
+          800: '#22526a',
+          700: '#2d6073',
+          600: '#3d7485',
+          500: '#4d8898',
+        },
+        // Crema — texto primario
+        cream: {
+          900: '#f0f7da',
+          800: '#dfebc0',
+          700: '#cad9a5',
+          600: '#b2c98b',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        // Plus Jakarta Sans: UI/body — reemplaza Syne
+        sans:  ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        // Instrument Serif: display/hero — reemplaza Lora
+        serif: ['Instrument Serif', 'Georgia', 'serif'],
+        // JetBrains Mono: etiquetas técnicas, números de sección
+        mono:  ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-in-out',
-        'slide-up': 'slideUp 0.4s ease-out',
-        'spin-slow': 'spin 2s linear infinite',
+        'fade-in':    'fadeIn 0.5s ease-out both',
+        'slide-up':   'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'slide-left': 'slideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'spin-slow':  'spin 2s linear infinite',
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0' },
+          '0%':   { opacity: '0' },
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { transform: 'translateY(16px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
+          '0%':   { transform: 'translateY(24px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)',     opacity: '1' },
+        },
+        slideLeft: {
+          '0%':   { transform: 'translateX(24px)', opacity: '0' },
+          '100%': { transform: 'translateX(0)',     opacity: '1' },
         },
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [require('@tailwindcss/forms')],
 };

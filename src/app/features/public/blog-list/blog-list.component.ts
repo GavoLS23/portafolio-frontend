@@ -14,7 +14,6 @@ import { LanguageService } from '../../../core/services/language.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { SpinnerComponent } from '../../../shared/components/spinner.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state.component';
-import { TagBadgeComponent } from '../../../shared/components/tag-badge.component';
 import { BlogPostResponse } from '../../../core/models/api.models';
 
 @Component({
@@ -26,14 +25,14 @@ import { BlogPostResponse } from '../../../core/models/api.models';
     TranslatePipe,
     SpinnerComponent,
     EmptyStateComponent,
-    TagBadgeComponent,
   ],
   template: `
-    <div class="section-container py-12 sm:py-16">
+    <div class="section-container py-16 sm:py-24">
 
       <!-- Header de sección -->
-      <div class="mb-10">
-        <h1 class="section-title">{{ 'blog.title' | translate }}</h1>
+      <div class="mb-12">
+        <span class="section-label">03 / Writing</span>
+        <h1 class="section-title mt-2">{{ 'blog.title' | translate }}</h1>
         <p class="section-subtitle">{{ 'blog.subtitle' | translate }}</p>
       </div>
 
@@ -49,44 +48,45 @@ import { BlogPostResponse } from '../../../core/models/api.models';
       } @else {
 
         <!-- Grid de posts -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           @for (post of blog.posts(); track post.id) {
             <article
               [routerLink]="['/blog', post.slug]"
-              class="card-hover group cursor-pointer flex flex-col overflow-hidden"
+              class="group cursor-pointer border-l-2 border-surface-600 hover:border-accent-500
+                     pl-4 py-1 transition-all duration-300"
             >
-              <!-- Cabecera de color (placeholder imagen) -->
-              <div class="h-2 bg-gradient-to-r from-indigo-600 to-violet-600"></div>
-
-              <div class="p-5 flex flex-col flex-1">
-                <!-- Tags -->
-                <div class="flex flex-wrap gap-1.5 mb-3">
-                  @for (tag of post.tags.slice(0, 3); track tag) {
-                    <app-tag-badge [label]="tag" color="indigo" />
-                  }
-                </div>
-
-                <!-- Título -->
-                <h2 class="text-lg font-semibold text-zinc-100 mb-2 group-hover:text-indigo-400 transition-colors">
-                  {{ getTitle(post) }}
-                </h2>
-
-                <!-- Extracto -->
-                <p class="text-sm text-zinc-400 line-clamp-3 mb-4 flex-1">
-                  {{ getExcerpt(post) }}
-                </p>
-
-                <!-- Footer de la tarjeta -->
-                <div class="flex items-center justify-between pt-3 border-t border-zinc-700/50 text-xs">
-                  @if (post.publishedAt) {
-                    <time class="text-zinc-500" [dateTime]="post.publishedAt">
-                      {{ post.publishedAt | date:'mediumDate' }}
-                    </time>
-                  }
-                  <span class="text-indigo-400 group-hover:text-indigo-300 font-medium transition-colors">
-                    {{ 'blog.readMore' | translate }} →
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-3 mb-3">
+                @for (tag of post.tags.slice(0, 2); track tag) {
+                  <span class="font-mono text-[10px] tracking-[0.2em] uppercase
+                               text-accent-500/55 group-hover:text-accent-500/85 transition-colors">
+                    #{{ tag }}
                   </span>
-                </div>
+                }
+              </div>
+
+              <!-- Título -->
+              <h2 class="text-sm font-bold text-cream-900 mb-2
+                         group-hover:text-accent-400 transition-colors leading-snug">
+                {{ getTitle(post) }}
+              </h2>
+
+              <!-- Extracto -->
+              <p class="text-xs text-cream-900/50 line-clamp-3 mb-4 leading-relaxed">
+                {{ getExcerpt(post) }}
+              </p>
+
+              <!-- Footer -->
+              <div class="flex items-center justify-between text-xs">
+                @if (post.publishedAt) {
+                  <time class="font-mono text-cream-900/25" [dateTime]="post.publishedAt">
+                    {{ post.publishedAt | date:'dd MMM yyyy' }}
+                  </time>
+                }
+                <span class="font-mono text-[10px] tracking-wide uppercase
+                             text-accent-500/55 group-hover:text-accent-400 transition-colors">
+                  {{ 'blog.readMore' | translate }} →
+                </span>
               </div>
             </article>
           }
@@ -104,7 +104,7 @@ import { BlogPostResponse } from '../../../core/models/api.models';
               @if (blog.isLoading()) {
                 <app-spinner size="sm" />
               } @else {
-                Cargar más
+                {{ 'blog.loadMore' | translate }}
               }
             </button>
           </div>

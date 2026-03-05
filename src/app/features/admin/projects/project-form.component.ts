@@ -17,9 +17,10 @@
  *
  * Validación: Reactive Forms con Validators estándar de Angular.
  */
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, DestroyRef } from '@angular/core';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProjectsService } from '../../../core/services/projects.service';
 import { TechnologiesService } from '../../../core/services/technologies.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -27,7 +28,7 @@ import { WebSocketService } from '../../../core/services/websocket.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { SpinnerComponent } from '../../../shared/components/spinner.component';
 import { TagBadgeComponent } from '../../../shared/components/tag-badge.component';
-import { ProjectResponse, UpdateProjectRequest } from '../../../core/models/api.models';
+import { ProjectResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-project-form',
@@ -39,219 +40,13 @@ import { ProjectResponse, UpdateProjectRequest } from '../../../core/models/api.
     SpinnerComponent,
     TagBadgeComponent,
   ],
-  template: `
-    <div class="max-w-3xl space-y-6">
-
-      <!-- Encabezado -->
-      <div class="flex items-center gap-4">
-        <a
-          routerLink="/admin/projects"
-          class="p-2 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
-        </a>
-        <div>
-          <h1 class="text-2xl font-bold text-zinc-100">
-            {{ isEdit() ? 'Editar proyecto' : ('admin.projects.new' | translate) }}
-          </h1>
-          @if (lastSaved()) {
-            <p class="text-xs text-emerald-400 mt-0.5">
-              Guardado automáticamente a las {{ lastSaved() }}
-            </p>
-          }
-        </div>
-      </div>
-
-      <!-- Estado de carga (modo edición) -->
-      @if (loading()) {
-        <div class="flex justify-center py-16">
-          <app-spinner size="lg" />
-        </div>
-      } @else {
-
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-6">
-
-          <!-- ── Sección: Info básica ──────────────────────────────────── -->
-          <div class="card p-6 space-y-4">
-            <h2 class="text-base font-semibold text-zinc-200 border-b border-zinc-700 pb-2">
-              Información básica
-            </h2>
-
-            <!-- Slug -->
-            <div>
-              <label class="form-label">{{ 'admin.projects.slug' | translate }}</label>
-              <div class="flex items-center gap-2">
-                <span class="text-zinc-500 text-sm">/project/</span>
-                <input
-                  type="text"
-                  formControlName="slug"
-                  class="form-input flex-1"
-                  placeholder="mi-proyecto"
-                />
-              </div>
-              @if (form.controls.slug.invalid && form.controls.slug.touched) {
-                <p class="form-error">El slug es requerido.</p>
-              }
-            </div>
-
-            <!-- URLs opcionales -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="form-label">{{ 'admin.projects.demoUrl' | translate }}</label>
-                <input type="url" formControlName="demoUrl" class="form-input" placeholder="https://demo.com" />
-              </div>
-              <div>
-                <label class="form-label">{{ 'admin.projects.repoUrl' | translate }}</label>
-                <input type="url" formControlName="repositoryUrl" class="form-input" placeholder="https://github.com/..." />
-              </div>
-            </div>
-          </div>
-
-          <!-- ── Sección: Traducciones ─────────────────────────────────── -->
-          <div class="card p-6 space-y-6">
-            <h2 class="text-base font-semibold text-zinc-200 border-b border-zinc-700 pb-2">
-              Contenido (ES / EN)
-            </h2>
-
-            <!-- Tabs de idioma -->
-            <div class="flex gap-1 p-1 bg-zinc-900/50 rounded-lg w-fit">
-              @for (tab of ['es', 'en']; track tab) {
-                <button
-                  type="button"
-                  class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-                  [class.bg-zinc-700]="activeLang() === tab"
-                  [class.text-zinc-100]="activeLang() === tab"
-                  [class.text-zinc-400]="activeLang() !== tab"
-                  (click)="activeLang.set(tab)"
-                >
-                  {{ tab.toUpperCase() }}
-                </button>
-              }
-            </div>
-
-            <!-- Español -->
-            @if (activeLang() === 'es') {
-              <div class="space-y-4" formGroupName="es">
-                <div>
-                  <label class="form-label">{{ 'admin.projects.title_es' | translate }}</label>
-                  <input type="text" formControlName="title" class="form-input"
-                    (input)="autoSlug()" placeholder="Mi Proyecto" />
-                </div>
-                <div>
-                  <label class="form-label">{{ 'admin.projects.desc_es' | translate }}</label>
-                  <textarea formControlName="description" rows="2" class="form-input resize-none"
-                    placeholder="Descripción corta para listados..."></textarea>
-                </div>
-                <div>
-                  <label class="form-label">{{ 'admin.projects.longDesc_es' | translate }}</label>
-                  <textarea formControlName="longDescription" rows="6" class="form-input resize-y"
-                    placeholder="Descripción larga con detalles del proyecto..."></textarea>
-                </div>
-              </div>
-            }
-
-            <!-- Inglés -->
-            @if (activeLang() === 'en') {
-              <div class="space-y-4" formGroupName="en">
-                <div>
-                  <label class="form-label">{{ 'admin.projects.title_en' | translate }}</label>
-                  <input type="text" formControlName="title" class="form-input" placeholder="My Project" />
-                </div>
-                <div>
-                  <label class="form-label">{{ 'admin.projects.desc_en' | translate }}</label>
-                  <textarea formControlName="description" rows="2" class="form-input resize-none"
-                    placeholder="Short description for listings..."></textarea>
-                </div>
-                <div>
-                  <label class="form-label">{{ 'admin.projects.longDesc_en' | translate }}</label>
-                  <textarea formControlName="longDescription" rows="6" class="form-input resize-y"
-                    placeholder="Long description with project details..."></textarea>
-                </div>
-              </div>
-            }
-          </div>
-
-          <!-- ── Sección: Tecnologías ──────────────────────────────────── -->
-          <div class="card p-6">
-            <h2 class="text-base font-semibold text-zinc-200 border-b border-zinc-700 pb-2 mb-4">
-              {{ 'admin.projects.technologies' | translate }}
-            </h2>
-
-            @if (techsSvc.isLoading()) {
-              <app-spinner size="sm" />
-            } @else {
-              <div class="flex flex-wrap gap-2">
-                @for (tech of techsSvc.technologies(); track tech.id) {
-                  <button
-                    type="button"
-                    class="transition-all"
-                    (click)="toggleTech(tech.id)"
-                  >
-                    <app-tag-badge
-                      [label]="tech.name"
-                      [color]="isTechSelected(tech.id) ? 'indigo' : 'zinc'"
-                    />
-                  </button>
-                }
-              </div>
-              @if (techsSvc.technologies().length === 0) {
-                <p class="text-sm text-zinc-500">
-                  No hay tecnologías. <a routerLink="/admin/technologies" class="text-indigo-400 hover:underline">Crear tecnologías</a>
-                </p>
-              }
-            }
-          </div>
-
-          <!-- ── Acciones del formulario ───────────────────────────────── -->
-          <div class="flex items-center justify-between pt-2">
-            <div class="flex gap-3">
-              <button
-                type="submit"
-                class="btn-primary"
-                [disabled]="saving()"
-              >
-                @if (saving()) {
-                  <app-spinner size="sm" />
-                  {{ 'admin.projects.saving' | translate }}
-                } @else {
-                  {{ 'admin.projects.save' | translate }}
-                }
-              </button>
-
-              @if (isEdit()) {
-                <!-- Toggle publicar/despublicar -->
-                <button
-                  type="button"
-                  class="btn-secondary"
-                  (click)="toggleStatus()"
-                >
-                  {{ statusLabel() }}
-                </button>
-              }
-            </div>
-
-            <a routerLink="/admin/projects" class="btn-danger">
-              Cancelar
-            </a>
-          </div>
-
-          <!-- Error de guardado -->
-          @if (saveError()) {
-            <div class="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-              <p class="text-sm text-red-400">{{ saveError() }}</p>
-            </div>
-          }
-        </form>
-      }
-    </div>
-  `,
+  templateUrl: './project-form.component.html',
 })
 export class ProjectFormComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
   readonly projectsSvc = inject(ProjectsService);
   readonly techsSvc = inject(TechnologiesService);
   readonly lang = inject(LanguageService);
@@ -340,7 +135,7 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
     if (!project) return;
 
     const newStatus = project.status === 'published' ? 'draft' : 'published';
-    this.projectsSvc.update(id, { status: newStatus }).subscribe({
+    this.projectsSvc.update(id, { status: newStatus }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (updated) => {
         this.currentProject.set(id, updated);
         this.projectsSvc.updateLocal(updated);
@@ -374,7 +169,7 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
       ? this.projectsSvc.update(id, payload)
       : this.projectsSvc.create(payload);
 
-    request$.subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (project) => {
         this.saving.set(false);
         if (!id) {
