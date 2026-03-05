@@ -23,7 +23,7 @@ import { NgClass } from '@angular/common';
       [attr.aria-label]="label()"
     >
       <svg
-        class="animate-spin text-indigo-500"
+        class="animate-spin text-accent-500"
         [ngClass]="sizeClasses()"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

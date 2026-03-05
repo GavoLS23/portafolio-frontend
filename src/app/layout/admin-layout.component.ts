@@ -55,7 +55,7 @@ interface NavItem {
       >
         <!-- Logo -->
         <div class="h-16 flex items-center px-5 border-b border-zinc-800 flex-shrink-0">
-          <span class="text-lg font-bold text-indigo-400">&lt;admin /&gt;</span>
+          <span class="text-lg font-bold text-accent-500">&lt;admin /&gt;</span>
         </div>
 
         <!-- Navegación -->
@@ -63,7 +63,7 @@ interface NavItem {
           @for (item of navItems; track item.path) {
             <a
               [routerLink]="item.path"
-              routerLinkActive="bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+              routerLinkActive="bg-accent-500/10 text-accent-500 border-accent-500/20"
               [routerLinkActiveOptions]="{ exact: item.path === '/admin/dashboard' }"
               class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
                      text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors

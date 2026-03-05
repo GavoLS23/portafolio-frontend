@@ -103,6 +103,8 @@ export interface ProjectResponse {
   demoUrl: string | null;
   repositoryUrl: string | null;
   thumbnailMediaId: string | null;
+  /** URL pública resuelta por el backend a partir de thumbnailMediaId */
+  thumbnailUrl: string | null;
   translations: ProjectTranslation[];
   technologyIds: string[];
   createdAt: string;
@@ -143,6 +145,8 @@ export interface BlogPostResponse {
   slug: string;
   status: PostStatus;
   thumbnailMediaId: string | null;
+  /** URL pública resuelta por el backend a partir de thumbnailMediaId */
+  thumbnailUrl: string | null;
   publishedAt: string | null;
   translations: BlogTranslation[];
   tags: string[];

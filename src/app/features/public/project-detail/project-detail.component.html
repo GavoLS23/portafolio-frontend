@@ -1,11 +1,12 @@
-<div class="section-container py-8 sm:py-12">
+<div class="section-container py-16 sm:py-24">
 
   <!-- Botón volver -->
   <a
     routerLink="/"
-    class="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-100 transition-colors mb-8"
+    class="inline-flex items-center gap-2 font-mono text-xs tracking-[0.12em] uppercase
+           text-cream-900/35 hover:text-accent-500 transition-colors mb-12"
   >
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
     </svg>
     {{ 'projects.back' | translate }}
@@ -21,7 +22,7 @@
   <!-- Estado: error / no encontrado -->
   @if (error()) {
     <div class="text-center py-24">
-      <p class="text-zinc-400 mb-4">{{ error() }}</p>
+      <p class="font-serif text-cream-900/50 mb-6">{{ error() }}</p>
       <a routerLink="/" class="btn-primary">{{ 'error.backHome' | translate }}</a>
     </div>
   }
@@ -31,22 +32,30 @@
     @let p = project()!;
 
     <article class="max-w-3xl mx-auto">
+
       <!-- Header -->
-      <header class="mb-8">
-        <!-- Estado -->
+      <header class="mb-10">
+        <!-- Borrador badge -->
         @if (p.status === 'draft') {
           <span class="badge-draft mb-4 inline-flex">Borrador</span>
         }
 
-        <h1 class="text-4xl sm:text-5xl font-bold text-zinc-100 mb-4">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="section-label">02 / Work</span>
+          <div class="h-px w-8 bg-surface-600"></div>
+        </div>
+
+        <h1 class="text-[clamp(2rem,6vw,3.5rem)] font-extrabold text-cream-900
+                   leading-[0.92] tracking-tighter mb-6">
           {{ getTitle(p) }}
         </h1>
-        <p class="text-xl text-zinc-400 leading-relaxed">
+
+        <p class="font-serif text-lg text-cream-900/55 leading-relaxed mb-8">
           {{ getDescription(p) }}
         </p>
 
         <!-- Links de acción -->
-        <div class="flex flex-wrap gap-4 mt-6">
+        <div class="flex flex-wrap gap-4">
           @if (p.demoUrl) {
             <a
               [href]="p.demoUrl"
@@ -54,7 +63,7 @@
               rel="noopener noreferrer"
               class="btn-primary"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
               </svg>
@@ -68,7 +77,7 @@
               rel="noopener noreferrer"
               class="btn-secondary"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
               </svg>
@@ -79,39 +88,56 @@
       </header>
 
       <!-- Thumbnail -->
-      @if (p.thumbnailMediaId) {
-        <div class="aspect-video rounded-xl overflow-hidden mb-8 bg-zinc-800">
-          <div class="w-full h-full flex items-center justify-center">
-            <svg class="w-16 h-16 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-          </div>
+      @if (p.thumbnailUrl) {
+        <div class="aspect-video border border-surface-700 overflow-hidden mb-10 bg-surface-800">
+          <img
+            [src]="p.thumbnailUrl"
+            [alt]="getTitle(p)"
+            class="w-full h-full object-cover"
+          />
         </div>
       }
 
       <!-- Tecnologías -->
-      <div class="card p-5 mb-8">
-        <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">
-          {{ 'projects.technologies' | translate }}
-        </h2>
+      <div class="border border-surface-700 bg-surface-800 p-5 mb-10">
+        <p class="section-label mb-4">Stack tecnológico</p>
         <div class="flex flex-wrap gap-2">
           @for (techId of p.technologyIds; track techId) {
             <app-tag-badge
               [label]="getTechName(techId)"
-              color="indigo"
+              color="zinc"
             />
           }
         </div>
       </div>
 
       <!-- Descripción larga -->
-      <div class="prose prose-invert prose-zinc max-w-none">
-        <div
-          class="text-zinc-300 leading-relaxed space-y-4"
-          [innerHTML]="getLongDescription(p)"
-        ></div>
-      </div>
+      <div
+        class="
+          font-serif text-base text-cream-900/65 leading-relaxed
+          [&_h1]:font-sans [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-cream-900
+                 [&_h1]:tracking-tight [&_h1]:mt-10 [&_h1]:mb-4
+          [&_h2]:font-sans [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-cream-900
+                 [&_h2]:tracking-tight [&_h2]:mt-8 [&_h2]:mb-3
+          [&_h3]:font-sans [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-cream-900/80
+                 [&_h3]:mt-6 [&_h3]:mb-2
+          [&_p]:mb-5 [&_ul]:mb-5 [&_ol]:mb-5
+          [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6
+          [&_li]:mb-1.5
+          [&_a]:text-accent-400 [&_a]:no-underline [&_a]:border-b [&_a]:border-accent-500/30
+          [&_a:hover]:border-accent-500 [&_a:hover]:text-accent-300
+          [&_strong]:text-cream-900 [&_strong]:font-semibold
+          [&_blockquote]:border-l-2 [&_blockquote]:border-accent-500/50
+                        [&_blockquote]:pl-5 [&_blockquote]:italic
+                        [&_blockquote]:text-cream-900/45 [&_blockquote]:my-6
+          [&_code]:font-mono [&_code]:text-sm [&_code]:text-accent-400
+                  [&_code]:bg-surface-700 [&_code]:px-1.5 [&_code]:py-0.5
+          [&_pre]:bg-surface-800 [&_pre]:border [&_pre]:border-surface-600
+                 [&_pre]:p-4 [&_pre]:overflow-x-auto [&_pre]:my-6
+          [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-cream-900/65
+        "
+        [innerHTML]="getLongDescription(p)"
+      ></div>
     </article>
   }
 </div>

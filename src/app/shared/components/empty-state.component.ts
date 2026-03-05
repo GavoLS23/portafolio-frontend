@@ -26,9 +26,9 @@ import { Component, input, output } from '@angular/core';
   template: `
     <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
       <!-- Ícono de caja vacía -->
-      <div class="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center mb-4">
+      <div class="w-16 h-16 border border-surface-600 bg-surface-800 flex items-center justify-center mb-4">
         <svg
-          class="w-8 h-8 text-zinc-500"
+          class="w-8 h-8 text-surface-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -43,7 +43,7 @@ import { Component, input, output } from '@angular/core';
         </svg>
       </div>
 
-      <p class="text-zinc-400 text-sm mb-4">{{ message() }}</p>
+      <p class="font-serif text-sm text-cream-900/50 mb-4">{{ message() }}</p>
 
       @if (actionLabel()) {
         <button

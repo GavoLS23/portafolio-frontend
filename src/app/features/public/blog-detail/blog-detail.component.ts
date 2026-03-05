@@ -18,13 +18,12 @@ import { BlogService } from '../../../core/services/blog.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { SpinnerComponent } from '../../../shared/components/spinner.component';
-import { TagBadgeComponent } from '../../../shared/components/tag-badge.component';
 import { BlogPostResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-blog-detail',
   standalone: true,
-  imports: [RouterLink, DatePipe, TranslatePipe, SpinnerComponent, TagBadgeComponent],
+  imports: [RouterLink, DatePipe, TranslatePipe, SpinnerComponent],
   templateUrl: './blog-detail.component.html',
 })
 export class BlogDetailComponent implements OnInit {
